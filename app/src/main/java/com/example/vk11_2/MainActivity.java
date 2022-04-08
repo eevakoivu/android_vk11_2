@@ -9,19 +9,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Switch;
+import android.view.View;
 
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
-    Fragment fragment = new FragmentHome();
-    private ActionBarDrawerToggle drawerToggle;
+    DrawerLayout drawerLayout = null;
+    NavigationView navigationView = null;
+    Toolbar toolbar = null;
+    FragmentHome fragmenthome = new FragmentHome();
+    FragmentSettings fragmentsettings = new FragmentSettings();
+    ActionBarDrawerToggle drawerToggle = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +44,16 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout.addDrawerListener(drawerToggle);
 
-        setFragment(fragment);
+        setFragment(fragmenthome);
         setupDrawerContent(navigationView);
 
 
     }
 
-    public void setFragment(Fragment fragment) {
+    public void setFragment(Fragment fragmenthome) {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.flContent, fragment).commit();
+        transaction.replace(R.id.flContent, fragmenthome).commit();
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -82,11 +84,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
+        Fragment fragment = null;
 
         if(menuItem.getItemId() == R.id.nav_settings) {
-            fragment = new FragmentSettings();
+            fragment = fragmentsettings;
         } else {
-            fragment = new FragmentHome();
+            fragment = fragmenthome;
         }
 
         FragmentManager manager = getSupportFragmentManager();
@@ -102,7 +105,32 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.closeDrawers();
     }
 
+    /*@Override
+    public void onStart(){ //ottaa vastaan arvon FragmentSettings
+        super.onStart(); //try-catch
+        try{
+            String text = getIntent().getExtras().get("key1").toString();
+            sendValueToFragement();
 
+        }catch(Exception e){
+            System.out.println("virhe MainActivity");
+        }
+
+    }*/
+
+    public void getValueFromFragment(){
+        Intent intent = getIntent();
+        String text = intent.getStringExtra("key1");
+        System.out.println("FragementSetting saatu arvo:" + text);
+        sendValueToFragement();
+    }
+
+    public void sendValueToFragement(){
+        Bundle bundle = new Bundle();
+        bundle.putString("key2","estä");
+        fragmenthome.setArguments(bundle); //lähetetään arvon FragementHome
+
+    }
 
 
 }
